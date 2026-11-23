@@ -3,3 +3,11 @@
 #   "Anatomy of the Inner Ear - by University of Dundee School of Medicine - CC-BY-NC-SA 4.0"
 #   "Kidney - by Lissie Cowley - CC-BY-NC 4.0"
 # Decyzja Seby (2026-11-23): wykluczyć w v1.
+# Ucho wewnętrzne (model Dundee, CC-BY-NC-SA): w Startup.blend to siatki Cochlea i Vestibule (materiał bone-1).
+^cochlea$
+^vestibule$
+# Nerka (model Lissie Cowley, CC-BY-NC): siatki Kidney, Renal pelvis i krzywe naczyń wewnątrznerkowych.
+# Naczynia nerkowe poza nerką (renal artery/vein i ich gałęzie) pochodzą z BodyParts3D/Z-Anatomy i zostają.
+^kidney$
+^renal pelvis$
+^intrarenal (arteries|veins) of (left|right) kidney$
