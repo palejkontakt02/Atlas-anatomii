@@ -1,0 +1,5 @@
+# Struktury wykluczone z eksportu (jedno wyrażenie regularne na linię, bez rozróżniania wielkości liter).
+# Powód: Z-Anatomy License.txt wymienia modele na licencjach niekomercyjnych, niezgodnych z CC BY-SA 4.0 atlasu:
+#   "Anatomy of the Inner Ear - by University of Dundee School of Medicine - CC-BY-NC-SA 4.0"
+#   "Kidney - by Lissie Cowley - CC-BY-NC 4.0"
+# Decyzja Seby (2026-11-23): wykluczyć w v1.

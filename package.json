@@ -1,0 +1,34 @@
+{
+  "name": "atlas-anatomii",
+  "version": "1.0.0",
+  "description": "Tworzymy atlas do nauki anatomii",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/palejkontakt02/Atlas-anatomii.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/palejkontakt02/Atlas-anatomii/issues"
+  },
+  "homepage": "https://github.com/palejkontakt02/Atlas-anatomii#readme",
+  "type": "module",
+  "devDependencies": {
+    "@gltf-transform/cli": "4.5.1",
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "@playwright/test": "1.63.0",
+    "meshoptimizer": "1.3.0",
+    "vite": "8.3.8",
+    "vitest": "5.1.1"
+  },
+  "dependencies": {
+    "papaparse": "5.7.1",
+    "three": "0.187.0"
+  },
+  "private": true
+}
