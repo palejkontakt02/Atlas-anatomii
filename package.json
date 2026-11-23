@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "Tworzymy atlas do nauki anatomii",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "copy-data": "mkdir -p public/data && cp data/structures.csv public/data/structures.csv",
+    "predev": "npm run copy-data",
+    "prebuild": "npm run copy-data",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
