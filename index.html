@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Atlas anatomii 3D</title>
+  <meta name="description" content="Darmowy atlas anatomii 3D z nazwami po polsku, angielsku i łacinie.">
+  <meta name="theme-color" content="#14171c">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;600&family=Literata:ital,opsz,wght@0,7..72,500;0,7..72,600;1,7..72,400&display=swap">
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <canvas id="scene" aria-label="Model 3D ciała człowieka"></canvas>
+
+  <header class="top">
+    <h1 class="brand" data-i18n="title">Atlas anatomii</h1>
+    <div class="search" role="search">
+      <input id="search" data-testid="search-input" type="search" autocomplete="off" spellcheck="false"
+             aria-controls="results" aria-label="Szukaj struktury">
+      <ul id="results" class="results" role="listbox" hidden></ul>
+    </div>
+    <div class="lang" role="group" aria-label="Język nazw">
+      <button type="button" data-lang="pl" data-testid="lang-pl">PL</button>
+      <button type="button" data-lang="en" data-testid="lang-en">EN</button>
+      <button type="button" data-lang="la" data-testid="lang-la">ŁAC</button>
+    </div>
+  </header>
+
+  <button type="button" class="layers-toggle" id="layers-toggle" aria-expanded="false" aria-controls="layers" data-i18n="layers">Warstwy</button>
+  <nav class="layers" id="layers" aria-label="Warstwy">
+    <ul id="layer-list"></ul>
+    <label class="membranes"><input type="checkbox" id="membranes"> <span data-i18n="showMembranes"></span></label>
+  </nav>
+
+  <p class="hint" id="hint" data-i18n="hint"></p>
+
+  <section class="info" id="info" data-testid="info-panel" hidden aria-live="polite">
+    <button type="button" class="info-close" id="info-close" aria-label="Zamknij">×</button>
+    <h2 class="info-main" data-testid="info-main" id="info-main"></h2>
+    <dl class="names">
+      <div><dt>PL</dt><dd data-testid="info-pl" id="info-pl"></dd></div>
+      <div><dt>ENG</dt><dd data-testid="info-en" id="info-en"></dd></div>
+      <div><dt>ŁAC</dt><dd data-testid="info-la" id="info-la" class="latin"></dd></div>
+    </dl>
+    <div class="actions">
+      <button type="button" data-testid="btn-hide" id="btn-hide" data-i18n="hide"></button>
+      <button type="button" data-testid="btn-isolate" id="btn-isolate" data-i18n="isolate"></button>
+      <button type="button" data-testid="btn-show-all" id="btn-show-all" data-i18n="showAll"></button>
+    </div>
+  </section>
+
+  <footer class="credits" data-testid="footer">
+    <details>
+      <summary>Model 3D: Z-Anatomy na podstawie BodyParts3D, licencja CC BY-SA 4.0. Źródła i autorzy</summary>
+      <p>Model 3D: <a href="https://github.com/Z-Anatomy/Models-of-human-anatomy">Z-Anatomy</a> (Gauthier Kervyn, Marcin Zielinski), CC BY-SA 4.0, na podstawie <a href="https://dbarchive.biosciencedbc.jp/en/bodyparts3d/download.html">BodyParts3D</a> © The Database Center for Life Science, CC BY-SA 2.1 Japan; modele nerwów czaszkowych: University of Dundee, CAHID, CC BY 4.0; Brainder i White matter: University of Washington. Nazwy łacińskie i angielskie: Terminologia Anatomica 2 (za Z-Anatomy). Polskie nazwy: robocze, do weryfikacji. Atlas: <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pl">CC BY-SA 4.0</a>.</p>
+    </details>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

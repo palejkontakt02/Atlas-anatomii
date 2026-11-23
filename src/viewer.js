@@ -37,12 +37,13 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
 
   const materials = new Map();
   const highlight = new THREE.MeshStandardMaterial({
-    color: '#7fd3ff', emissive: '#1d6f9c', emissiveIntensity: 0.9, roughness: 0.5, side: THREE.DoubleSide,
+    color: '#45e0c2', emissive: '#0f6b5c', emissiveIntensity: 0.9, roughness: 0.5, side: THREE.DoubleSide,
   });
   const meshes = [];
   const visibility = createVisibility({ hiddenTissues: HIDDEN_TISSUES });
   let selected = [];
   let framed = false;
+  const bodyCenter = new THREE.Vector3(0, 1, 0);
 
   // ---- rendering on demand ----
   let frameRequested = false;
@@ -86,7 +87,8 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
     return true;
   }
 
-  function frame(objects) {
+  /** Fit `objects` in view; with fromOutside, look from the side of the body the objects are on. */
+  function frame(objects, { fromOutside = false } = {}) {
     const box = new THREE.Box3();
     for (const o of [].concat(objects)) box.expandByObject(o);
     if (box.isEmpty()) return;
@@ -97,6 +99,11 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
     const dist = (radius / Math.sin(fov / 2)) * (camera.aspect < 1 ? 1.25 / camera.aspect : 1.05);
     const dir = camera.position.clone().sub(controls.target).normalize();
     if (!framed) dir.set(0, 0, 1);
+    if (fromOutside) {
+      const out = center.clone().sub(bodyCenter);
+      out.y = 0;
+      if (out.length() > 0.02) dir.copy(out.normalize()).setY(0.15).normalize();
+    }
     controls.target.copy(center);
     camera.position.copy(center).addScaledVector(dir, Math.min(dist, 12));
     controls.update();
@@ -121,6 +128,7 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
     visibility.applyTo(added);
     scene.add(root);
     if (!framed) {
+      new THREE.Box3().setFromObject(root).getCenter(bodyCenter);
       frame(root);
       framed = true;
     }
@@ -189,7 +197,7 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
       if (!list.length) return null;
       visibility.reveal(meshes, list);
       setHighlight(list);
-      if (focus) frame(list);
+      if (focus) frame(list, { fromOutside: true });
       return describe(list[0]);
     },
     clearSelection() {
@@ -212,6 +220,7 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
       requestRender();
     },
     frame,
+    cameraState: () => ({ position: camera.position.toArray(), target: controls.target.toArray() }),
     stats: () => ({ meshes: meshes.length, selected: selected.map((m) => m.name) }),
   };
 }
