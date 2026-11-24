@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 from pipeline.build_csv import read_csv, write_csv  # noqa: E402
 
 SIDE_WORDS = re.compile(r"\b(lew[aey]|praw[aey]|left|right)\b", re.IGNORECASE)
+SOURCE_SIDE = re.compile(r"\b(left|right|dext\w*|sinist\w*)\b", re.IGNORECASE)
 CSV = ROOT / "data" / "structures.csv"
 
 
@@ -35,7 +36,7 @@ def check_pl(rows, systems):
     sel = [r for r in rows if r["system"] in systems]
     return {
         "empty": [r["id"] for r in sel if not r["pl"]],
-        "side_words": [r["id"] for r in sel if SIDE_WORDS.search(r["pl"])],
+        "side_words": [r["id"] for r in sel if SIDE_WORDS.search(r["pl"]) and not SOURCE_SIDE.search(r["en"] + " " + r["la"])],
     }
 
 

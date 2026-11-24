@@ -26,3 +26,15 @@ def test_check_reports_empty_and_side_words():
     problems = check_pl(rows, ["bones"])
     assert problems["empty"] == ["femur"]
     assert problems["side_words"] == ["a"]
+
+
+def test_side_words_allowed_when_part_of_english_name():
+    rows = [{**ROW, "id": "left_coronary_artery", "en": "Left coronary artery", "pl": "Tętnica wieńcowa lewa"},
+            {**ROW, "id": "x", "en": "Femur", "pl": "Kość udowa prawa"}]
+    assert check_pl(rows, ["bones"])["side_words"] == ["x"]
+
+
+def test_side_words_allowed_when_in_latin_name():
+    rows = [{**ROW, "id": "seg6", "en": "Anterior lateral segment of liver (VI)",
+             "la": "Segmentum anterius laterale dextrum hepatis (VI)", "pl": "Segment przedni boczny prawy wątroby (VI)"}]
+    assert check_pl(rows, ["bones"])["side_words"] == []
