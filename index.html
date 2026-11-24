@@ -16,6 +16,10 @@
 
   <header class="top">
     <h1 class="brand" data-i18n="title">Atlas anatomii</h1>
+    <nav class="tabs" aria-label="Tryb">
+      <button type="button" data-testid="tab-atlas" data-mode="atlas" data-i18n="tabAtlas">Atlas</button>
+      <button type="button" data-testid="tab-exercise" data-mode="exercise" data-i18n="tabExercise">Ćwiczenia</button>
+    </nav>
     <div class="search" role="search">
       <input id="search" data-testid="search-input" type="search" autocomplete="off" spellcheck="false"
              aria-controls="results" aria-label="Szukaj struktury">
@@ -48,6 +52,47 @@
       <button type="button" data-testid="btn-hide" id="btn-hide" data-i18n="hide"></button>
       <button type="button" data-testid="btn-isolate" id="btn-isolate" data-i18n="isolate"></button>
       <button type="button" data-testid="btn-show-all" id="btn-show-all" data-i18n="showAll"></button>
+    </div>
+  </section>
+
+  <section class="exercise" id="exercise" hidden>
+    <canvas id="ex-scene" aria-label="Model 3D w ruchu"></canvas>
+    <aside class="ex-panel" id="ex-panel">
+      <div class="ex-panel-head">
+        <h2 id="ex-title"></h2>
+        <div class="seg" data-testid="ex-colormode" role="group">
+          <button type="button" data-color="activity" aria-pressed="true" data-i18n="colorActivity"></button>
+          <button type="button" data-color="role" aria-pressed="false" data-i18n="colorRole"></button>
+        </div>
+      </div>
+      <h3 data-i18n="nowWorking"></h3>
+      <ol class="ex-now" data-testid="ex-now" id="ex-now"></ol>
+      <p class="ex-status" data-testid="ex-status" id="ex-status" data-ready="false"></p>
+    </aside>
+    <section class="ex-card" id="ex-card" data-testid="ex-card" hidden aria-live="polite">
+      <button type="button" class="info-close" id="ex-card-close" aria-label="Zamknij">×</button>
+      <h2 class="info-main" id="ex-card-main"></h2>
+      <dl class="names">
+        <div><dt>PL</dt><dd id="ex-card-pl"></dd></div>
+        <div><dt>ENG</dt><dd id="ex-card-en"></dd></div>
+        <div><dt>ŁAC</dt><dd id="ex-card-la" class="latin"></dd></div>
+      </dl>
+      <p class="ex-card-role" data-testid="ex-card-role" id="ex-card-role"></p>
+      <p class="ex-card-mvic" data-testid="ex-card-mvic" id="ex-card-mvic"></p>
+      <p class="ex-card-note" id="ex-card-note"></p>
+      <div class="ex-card-source" data-testid="ex-card-source" id="ex-card-source"></div>
+    </section>
+    <div class="ex-bar" id="ex-bar">
+      <p class="ex-phase" data-testid="ex-phase" id="ex-phase"></p>
+      <p class="ex-angles" data-testid="ex-angles" id="ex-angles"></p>
+      <div class="ex-controls">
+        <button type="button" class="ex-play" data-testid="ex-play" id="ex-play" aria-pressed="true"></button>
+        <div class="ex-track">
+          <input type="range" min="0" max="1000" value="0" data-testid="ex-seek" id="ex-seek">
+          <div class="ex-phases" id="ex-phases" aria-hidden="true"></div>
+        </div>
+        <button type="button" class="ex-speed" data-testid="ex-speed" id="ex-speed">1×</button>
+      </div>
     </div>
   </section>
 

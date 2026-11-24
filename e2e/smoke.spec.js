@@ -45,7 +45,7 @@ test('desktop: layers, search, names, isolate', async ({ page }) => {
 test('canvas tap selects a bone and drag does not', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByTestId('layer-bones')).toHaveAttribute('data-status', 'ready', { timeout: 30_000 });
-  const box = await page.locator('canvas').boundingBox();
+  const box = await page.locator('#scene').boundingBox();
   const cx = box.x + box.width / 2;
   const cy = box.y + box.height * 0.5; // miednica / kręgosłup na środku kadru
   await page.mouse.move(cx, cy);

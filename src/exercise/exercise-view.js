@@ -22,12 +22,10 @@ const FASCIA_ID = /(^fascia_|_fascia(_|$))/;
  * onSelect({id, side, fallbackEn} | null) on tap.
  */
 export function createExerciseView(canvas, { exercise, onSelect = () => {}, onFrame = () => {} }) {
-  const fine = typeof matchMedia === 'function' && matchMedia('(pointer: fine)').matches;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.95;
-  renderer.shadowMap.enabled = fine;
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#14171c');
   scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
@@ -36,15 +34,24 @@ export function createExerciseView(canvas, { exercise, onSelect = () => {}, onFr
   camera.position.set(1.9, 1.0, 2.1);
   const sun = new THREE.DirectionalLight(0xfff4e8, 2.2);
   sun.position.set(1.2, 3, 2);
-  sun.castShadow = fine;
-  sun.shadow.mapSize.set(2048, 2048);
-  Object.assign(sun.shadow.camera, { left: -1, right: 1, top: 2, bottom: -0.2, near: 0.5, far: 6 });
-  sun.shadow.bias = -0.0005;
   scene.add(sun, new THREE.HemisphereLight(0xdfe8ff, 0x302820, 0.6));
   const ground = new THREE.Mesh(new THREE.CircleGeometry(1.6, 64), new THREE.MeshStandardMaterial({ color: '#1c2129', roughness: 0.95 }));
   ground.rotation.x = -Math.PI / 2;
-  ground.receiveShadow = true;
   scene.add(ground);
+  // Miękki cień kontaktowy pod stopami zamiast mapy cieni: połowa kosztu rysowania na każdym urządzeniu.
+  const blob = document.createElement('canvas');
+  blob.width = blob.height = 128;
+  const g2 = blob.getContext('2d');
+  const grad = g2.createRadialGradient(64, 64, 4, 64, 64, 64);
+  grad.addColorStop(0, 'rgba(0,0,0,0.55)');
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  g2.fillStyle = grad;
+  g2.fillRect(0, 0, 128, 128);
+  const contact = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.7),
+    new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(blob), transparent: true, depthWrite: false }));
+  contact.rotation.x = -Math.PI / 2;
+  contact.position.set(0, 0.002, 0.03);
+  scene.add(contact);
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = true;
   controls.target.set(0, 0.75, 0.05);
@@ -107,7 +114,6 @@ export function createExerciseView(canvas, { exercise, onSelect = () => {}, onFr
       sm.name = mesh.name;
       sm.userData = { ...mesh.userData, id, side };
       sm.position.copy(mesh.position); sm.quaternion.copy(mesh.quaternion); sm.scale.copy(mesh.scale);
-      sm.castShadow = fine; sm.receiveShadow = fine;
       sm.frustumCulled = false;
       mesh.parent.add(sm);
       mesh.parent.remove(mesh);
@@ -185,6 +191,7 @@ export function createExerciseView(canvas, { exercise, onSelect = () => {}, onFr
   });
 
   // ---- pętla ----
+  const stats = { logic: 0, render: 0, ui: 0, frames: 0 };
   let last = performance.now(), running = true;
   const ready = load();
   function frame(now) {
@@ -196,14 +203,18 @@ export function createExerciseView(canvas, { exercise, onSelect = () => {}, onFr
     if (!bones) return;
     if (!player.playing && dirty <= 0) return;
     dirty--;
+    const t0 = performance.now();
     player.tick(dt);
     const t = player.progress();
     const angles = sampleAngles(exercise, t);
     applyPose(bones, angles);
     const muscles = musclesNow(exercise, t);
     paint(muscles);
+    const t1 = performance.now();
     renderer.render(scene, camera);
+    const t2 = performance.now();
     onFrame({ t, playing: player.playing, speed: player.speed, phase: phaseAt(exercise, t), angles, muscles });
+    stats.logic = t1 - t0; stats.render = t2 - t1; stats.ui = performance.now() - t2; stats.frames++;
   }
   requestAnimationFrame(frame);
 
@@ -218,6 +229,7 @@ export function createExerciseView(canvas, { exercise, onSelect = () => {}, onFr
     select(id) {
       setHighlight(id ? meshes.filter((m) => m.userData.id === id) : []);
     },
+    stats: () => ({ ...stats, drawCalls: renderer.info.render.calls, triangles: renderer.info.render.triangles }),
     cameraState: () => ({ position: camera.position.toArray(), target: controls.target.toArray(), t: player.progress() }),
     dispose() { running = false; renderer.dispose(); },
   };

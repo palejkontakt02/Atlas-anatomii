@@ -5,6 +5,9 @@ import { searchStructures } from './search.js';
 import { parseStructures } from './structures.js';
 import { createUI } from './ui.js';
 import { createViewer } from './viewer.js';
+import { parseExercise } from './exercise/exercise-data.js';
+import { createExerciseUI } from './exercise/exercise-ui.js';
+import { createExerciseView } from './exercise/exercise-view.js';
 
 const LANG_KEY = 'atlas.lang';
 const readLang = () => {
@@ -60,6 +63,7 @@ const ui = createUI({
   onLang(lang) {
     saveLang(lang);
     ui.setLang(lang);
+    exUI?.setLang(lang);
   },
   onHide() {
     viewer.hideSelected();
@@ -85,6 +89,71 @@ fetch('data/structures.csv')
   })
   .catch((e) => console.warn('Brak nazw struktur:', e.message));
 
-window.__atlas = { viewer, layers }; // do testów e2e i debugowania w konsoli
+window.__atlas = { viewer, layers, exerciseLoads: 0 }; // do testów e2e i debugowania w konsoli
+
+// ---- zakładka „Ćwiczenia” ----
+let exUI = null;
+let exView = null;
+let exLoading = null;
+let exWasPlaying = true;
+let exPlaying = true;
+
+function ensureExercise() {
+  if (exLoading) return exLoading;
+  window.__atlas.exerciseLoads++;
+  exLoading = (async () => {
+    const res = await fetch('data/exercises/przysiad.json');
+    if (!res.ok) throw new Error(`przysiad.json: ${res.status}`);
+    const exercise = parseExercise(await res.json());
+    exUI = createExerciseUI({
+      exercise,
+      structures: { get: (id) => structures.get(id) },
+      handlers: {
+        onToggle: () => exView.toggle(),
+        onSeek: (t01) => exView.seek(t01),
+        onSpeed: (sp) => exView.setSpeed(sp),
+        onColorMode: (mode) => exView.setColorMode(mode),
+        onPickMuscle: (id) => exView.select(id),
+      },
+    });
+    exUI.setLang(ui.getLang());
+    exView = createExerciseView(document.getElementById('ex-scene'), {
+      exercise,
+      onFrame: (f) => { exPlaying = f.playing; exUI.render(f); },
+      onSelect: (sel) => (sel ? exUI.showCard(sel.id, sel.side, sel.fallbackEn) : exUI.hideCard()),
+    });
+    window.__atlas.exercise = exView;
+    await exView.ready;
+    exUI.setReady(true);
+  })().catch((e) => {
+    console.warn('Ćwiczenie:', e.message);
+    exUI?.setReady(false);
+  });
+  return exLoading;
+}
+
+function setMode(mode) {
+  const exercise = mode === 'exercise';
+  document.body.dataset.mode = mode;
+  document.getElementById('exercise').hidden = !exercise;
+  for (const b of document.querySelectorAll('.tabs button')) b.setAttribute('aria-pressed', String(b.dataset.mode === mode));
+  if (exercise) {
+    ensureExercise();
+    if (exView && exWasPlaying) exView.play();
+  } else if (exView) {
+    exWasPlaying = exPlaying; // nie liczymy klatek w tle
+    exView.pause();
+  }
+}
+const modeFromHash = () => (location.hash === '#cwiczenia' ? 'exercise' : 'atlas');
+for (const b of document.querySelectorAll('.tabs button')) {
+  b.addEventListener('click', () => {
+    if (b.dataset.mode === 'exercise') location.hash = 'cwiczenia';
+    else history.replaceState(null, '', location.pathname + location.search);
+    setMode(b.dataset.mode);
+  });
+}
+addEventListener('hashchange', () => setMode(modeFromHash()));
+setMode(modeFromHash());
 
 for (const system of DEFAULT_ON) layers.setVisible(system, true);

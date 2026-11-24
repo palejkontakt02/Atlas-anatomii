@@ -565,7 +565,11 @@
    "sources": [
     "isear1997",
     "pmc4316497"
-   ]
+   ],
+   "label": {
+    "pl": "Mięśnie kulszowo-goleniowe",
+    "en": "Hamstrings"
+   }
   },
   {
    "ids": [
@@ -617,7 +621,11 @@
    "sources": [
     "pmc5276771",
     "agarwal2021"
-   ]
+   ],
+   "label": {
+    "pl": "Prostownik grzbietu",
+    "en": "Erector spinae"
+   }
   },
   {
    "ids": [
@@ -651,7 +659,11 @@
    },
    "sources": [
     "agarwal2021"
-   ]
+   ],
+   "label": {
+    "pl": "Mięśnie łydki (brzuchaty i płaszczkowaty)",
+    "en": "Calf muscles (gastrocnemius and soleus)"
+   }
   },
   {
    "ids": [
@@ -686,7 +698,11 @@
    },
    "sources": [
     "pmc7345922"
-   ]
+   ],
+   "label": {
+    "pl": "Mięśnie brzucha",
+    "en": "Abdominal muscles"
+   }
   }
  ],
  "sources": [
