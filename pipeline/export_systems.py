@@ -56,36 +56,64 @@ def collect(exclusions):
     return systems, rows
 
 
+MATERIALS = {}
+
+
+def material_named(name, fallback):
+    """One Blender material per Z-Anatomy material name, with a colour derived from the name
+    so that gltf-transform's dedup cannot merge (and rename) different materials."""
+    key = name or fallback
+    mat = MATERIALS.get(key)
+    if mat is None:
+        mat = bpy.data.materials.new(f"atlas:{key}")
+        h = sum(ord(c) * (i + 1) for i, c in enumerate(key)) % 997  # deterministic, unlike hash()
+        rgb = (0.3 + (h % 10) / 30, 0.3 + (h // 10 % 10) / 30, 0.3 + (h // 100) / 30, 1.0)
+        mat.use_nodes = True
+        mat.node_tree.nodes["Principled BSDF"].inputs["Base Color"].default_value = rgb
+        mat.diffuse_color = rgb
+        MATERIALS[key] = mat
+    return mat
+
+
 def build_mesh(entries, depsgraph, name):
+    """Merge the entries into one mesh in world space, keeping each face's Z-Anatomy material slot."""
     bm = bmesh.new()
+    names = []
     for e in entries:
-        ev = e["obj"].evaluated_get(depsgraph)
-        m = bpy.data.meshes.new_from_object(ev, preserve_all_data_layers=False, depsgraph=depsgraph)
-        m.transform(e["obj"].matrix_world)
+        obj = e["obj"]
+        m = bpy.data.meshes.new_from_object(obj.evaluated_get(depsgraph), preserve_all_data_layers=False,
+                                            depsgraph=depsgraph)
+        m.transform(obj.matrix_world)
+        slots = [s.material.name.lower() if s.material else "" for s in obj.material_slots] or [""]
+        remap = []
+        for sn in slots:
+            if sn not in names:
+                names.append(sn)
+            remap.append(names.index(sn))
+        for poly in m.polygons:
+            poly.material_index = remap[poly.material_index if poly.material_index < len(remap) else 0]
         bm.from_mesh(m)
         bpy.data.meshes.remove(m)
     if len(bm.verts) < MIN_VERTS or len(bm.faces) == 0:
         bm.free()
-        return None
+        return None, []
     me = bpy.data.meshes.new(name)
     bm.to_mesh(me)
     bm.free()
-    return me
+    return me, names
 
 
 def export_system(system, nodes, depsgraph):
     scene = bpy.data.scenes.new(f"export_{system}")
-    materials, names = {}, []
+    names = []
     for nname, entries in sorted(nodes.items()):
-        me = build_mesh(entries, depsgraph, nname)
+        me, slot_names = build_mesh(entries, depsgraph, nname)
         if me is None:
             continue
         tissue = tissue_of(entries[0]["obj"])
-        mat = materials.get(tissue)
-        if mat is None:
-            mat = materials[tissue] = bpy.data.materials.new(tissue or system)
-        me.materials.clear()
-        me.materials.append(mat)
+        # (bez materials.clear(): czyszczenie slotów zeruje przypisanie ścian do materiałów)
+        for sn in slot_names:
+            me.materials.append(material_named(sn, system))
         ob = bpy.data.objects.new(nname, me)
         ob["name"] = entries[0]["base"]
         ob["tissue"] = tissue

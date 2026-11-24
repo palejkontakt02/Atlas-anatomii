@@ -12,6 +12,6 @@ for s in "${SYSTEMS[@]}"; do
   if [ -n "${RATIO[$s]:-}" ]; then extra=(--simplify-ratio "${RATIO[$s]}"); fi
   npx gltf-transform optimize "build/raw/$s.glb" "public/models/$s.glb" \
     --compress meshopt --join false --instance false --flatten false \
-    --texture-compress false --simplify-error 0.0005 "${extra[@]}"
+    --texture-compress false --palette false --simplify-error 0.0005 "${extra[@]}"
   ls -l "public/models/$s.glb"
 done
