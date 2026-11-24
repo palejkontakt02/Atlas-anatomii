@@ -81,6 +81,9 @@ test('exercise on a phone: no horizontal scroll, play button not covered', async
     return document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest('[data-testid="ex-play"]') !== null;
   });
   expect(stillFree).toBe(true);
+  // karta przykrywa panel (wspólne miejsce nad paskiem); zamknięcie karty odsłania przycisk zwijania
+  await page.locator('#ex-card-close').click();
+  await expect(page.getByTestId('ex-card')).toBeHidden(slow);
   await page.getByTestId('ex-panel-toggle').click();
   await expect(page.getByTestId('ex-now')).toBeHidden(slow);
   await page.screenshot({ path: 'test-results/exercise-phone.png' });
