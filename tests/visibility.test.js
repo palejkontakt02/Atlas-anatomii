@@ -70,3 +70,11 @@ test('reveal keeps isolation of the same structure', () => {
   expect(v.isolatedId()).toBe('femur');
   expect(ms[2].visible).toBe(false);
 });
+
+test('hide works on the isolated structure', () => {
+  const ms = [mesh('femur__l'), mesh('femur__r'), mesh('tibia__l')];
+  const v = createVisibility();
+  v.isolate(ms, ms[0]);
+  v.hide(ms, ms[0]);
+  expect(vis(ms)).toEqual({ femur__l: false, femur__r: true, tibia__l: false });
+});

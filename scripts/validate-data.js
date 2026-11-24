@@ -25,6 +25,9 @@ export function validate(structures, nodeNames, systems) {
     if (!STATUSES.includes(s.plStatus)) errors.push(`${s.id}: pl_status "${s.plStatus}" (dozwolone: ${STATUSES.join(', ')})`);
     if (!ID_RE.test(s.id)) errors.push(`${s.id}: id niezgodne z [a-z0-9_]`);
     if (!systems.includes(s.system)) errors.push(`${s.id}: nieznany system "${s.system}"`);
+    for (const k of ['pl', 'en', 'la']) {
+      if (s[k].includes('\ufffd')) errors.push(`${s.id}: znak \ufffd w kolumnie ${k} (plik nie był zapisany jako UTF-8?)`);
+    }
   }
   for (const [system, names] of Object.entries(nodeNames)) {
     for (const n of names) {

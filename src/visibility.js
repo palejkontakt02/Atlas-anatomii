@@ -14,7 +14,7 @@ export function createVisibility({ hiddenTissues = [] } = {}) {
     const tissueHidden = !tissuesShown && !m.userData.revealed && tissueSet.has(m.userData.tissue);
     const isoHidden = isolated !== null && idOf(m) !== isolated;
     const isTarget = isolated !== null && idOf(m) === isolated;
-    m.visible = isTarget || (!m.userData.hiddenByUser && !tissueHidden && !isoHidden);
+    m.visible = !m.userData.hiddenByUser && (isTarget || (!tissueHidden && !isoHidden));
   };
 
   return {

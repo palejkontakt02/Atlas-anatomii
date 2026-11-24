@@ -26,3 +26,8 @@ test('duplicate ids in raw CSV text are errors', async () => {
   const { duplicateIds } = await import('../scripts/validate-data.js');
   expect(duplicateIds('id,system\na,bones\nb,bones\na,joints\n')).toEqual(['a']);
 });
+
+test('replacement characters from a non-UTF-8 save are errors', () => {
+  const s = csv(['femur,bones,Ko�ć udowa,Femur,Os femoris,do_weryfikacji']);
+  expect(validate(s, {}, ['bones']).errors).toEqual(['femur: znak � w kolumnie pl (plik nie był zapisany jako UTF-8?)']);
+});

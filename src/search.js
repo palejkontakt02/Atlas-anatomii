@@ -1,40 +1,57 @@
 const FIELDS = ['pl', 'en', 'la'];
 const cache = new WeakMap();
 
-/** Lowercase, strip diacritics (ł too), unify Latin ae/oe spellings, collapse whitespace. */
-export function normalize(text) {
+/** Lowercase, strip diacritics (ł too), collapse whitespace; keeps Latin ae/oe as typed. */
+function plain(text) {
   return (text || '')
     .toLowerCase()
     .replace(/ł/g, 'l')
     .replace(/æ/g, 'ae')
     .replace(/œ/g, 'oe')
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/ae/g, 'e')
-    .replace(/oe/g, 'e')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
+const collapse = (t) => t.replace(/ae/g, 'e').replace(/oe/g, 'e');
+
+/** plain() plus unified Latin spelling (glutaeus = gluteus, oesophagus = esophagus). */
+export function normalize(text) {
+  return collapse(plain(text));
+}
+
+// A short collapsed fragment ("cae" -> "ce") would match unrelated words.
+const MIN_COLLAPSED = 4;
 
 function fieldsOf(s) {
   let f = cache.get(s);
   if (!f) {
-    f = FIELDS.map((k) => normalize(s[k])).filter(Boolean).map((t) => ({ text: t, words: t.split(/[\s(),/-]+/) }));
+    f = FIELDS.map((k) => plain(s[k])).filter(Boolean).map((t) => {
+      const c = collapse(t);
+      return { text: t, coll: c, words: t.split(/[\s(),/-]+/), collWords: c.split(/[\s(),/-]+/) };
+    });
     cache.set(s, f);
   }
   return f;
 }
 
+function useColl(w) {
+  return collapse(w) !== w && collapse(w).length >= MIN_COLLAPSED;
+}
+const contains = (field, w) => field.text.includes(w) || (useColl(w) && field.coll.includes(collapse(w)));
+const startsWord = (field, w) => field.words.some((fw) => fw.startsWith(w))
+  || (useColl(w) && field.collWords.some((fw) => fw.startsWith(collapse(w))));
+
 function scoreField(field, q, words) {
-  if (!words.every((w) => field.text.includes(w))) return 0;
-  if (field.text.startsWith(q)) return 3;
-  if (words.every((w) => field.words.some((fw) => fw.startsWith(w)))) return 2;
+  if (!words.every((w) => contains(field, w))) return 0;
+  if (field.text.startsWith(q) || (useColl(q) && field.coll.startsWith(collapse(q)))) return 3;
+  if (words.every((w) => startsWord(field, w))) return 2;
   return 1;
 }
 
 /** Structures whose pl/en/la contains every word of `query`, best first. */
 export function searchStructures(structures, query, limit = 20) {
-  const q = normalize(query);
+  const q = plain(query);
   if (q.length < 2) return [];
   const words = q.split(' ');
   const hits = [];

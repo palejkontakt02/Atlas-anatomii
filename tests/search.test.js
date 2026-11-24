@@ -21,3 +21,13 @@ test('normalize', () => {
   expect(normalize('Glutæus')).toBe('gluteus');
   expect(normalize('Oesophagus')).toBe('esophagus');
 });
+
+const LATIN = [
+  { id: 'tensor_fasciae_latae', system: 'muscles', pl: 'Mięsień napinacz powięzi szerokiej', en: 'Tensor fasciae latae', la: 'Tensor fasciae latae', plStatus: 'do_weryfikacji' },
+  { id: 'cephalic_vein', system: 'vessels', pl: 'Żyła odpromieniowa', en: 'Cephalic vein', la: 'Vena cephalica', plStatus: 'do_weryfikacji' },
+];
+test('typing a Latin word letter by letter keeps the match (fascia → fasciae)', () => {
+  expect(searchStructures(LATIN, 'tensor fascia')[0]?.id).toBe('tensor_fasciae_latae');
+  expect(searchStructures(LATIN, 'tensor fasciae')[0]?.id).toBe('tensor_fasciae_latae');
+});
+test('"cae" does not match "ce" words', () => expect(searchStructures(LATIN, 'cae')).toEqual([]));

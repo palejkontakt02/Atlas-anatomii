@@ -1,4 +1,5 @@
 import { DEFAULT_ON } from './config.js';
+import { latestOnly } from './latest.js';
 import { LayerManager } from './layers.js';
 import { searchStructures } from './search.js';
 import { parseStructures } from './structures.js';
@@ -33,20 +34,29 @@ const viewer = createViewer(document.getElementById('scene'), {
 
 const layers = new LayerManager((system) => viewer.loadLayer(system), (system, state) => ui.renderLayerState(system, state));
 
+// Wybór z wyszukiwarki: liczy się tylko ostatni, nawet jeśli wcześniejszy czekał dłużej na warstwę.
+const pick = latestOnly(
+  async (s) => {
+    try {
+      await layers.ensureLoaded(s.system);
+      return true;
+    } catch {
+      return false; // stan błędu widać przy warstwie
+    }
+  },
+  (loaded, s) => {
+    if (!loaded) return;
+    const sel = viewer.select(s.id);
+    ui.showInfo(s, null, sel?.fallbackEn || s.en);
+  },
+);
+
 const ui = createUI({
   onLayerToggle: (system, on) => layers.setVisible(system, on).then(() => viewer.requestRender()),
   onRetry: (system) => layers.retry(system),
   onMembranes: (on) => viewer.setTissueVisible(on),
   onSearch: (q) => searchStructures(structures.values(), q),
-  async onPick(s) {
-    try {
-      await layers.ensureLoaded(s.system);
-    } catch {
-      return; // stan błędu widać przy warstwie
-    }
-    const sel = viewer.select(s.id);
-    ui.showInfo(s, null, sel?.fallbackEn || s.en);
-  },
+  onPick: (s) => pick(s),
   onLang(lang) {
     saveLang(lang);
     ui.setLang(lang);
