@@ -23,6 +23,21 @@ Wszystkie nazwy są w jednym pliku: [`data/structures.csv`](data/structures.csv)
 
 Polskie nazwy są robocze. Łacina pochodzi z `TA2.csv` projektu Z-Anatomy i miejscami ma literówki, więc też wymaga sprawdzenia.
 
+## Atlas ćwiczeń
+
+Zakładka **Ćwiczenia** (adres `#cwiczenia`) pokazuje ćwiczenie w ruchu na modelu z atlasu. Mięśnie świecą według aktywności z badań (% MVIC) albo według roli (główny, pomocniczy, stabilizujący, antagonista). Panel „Teraz pracują” pokazuje listę mięśni w danej chwili ruchu, a karta mięśnia: rolę, typ skurczu, zakres z badań i źródła.
+
+### Jak dodać ćwiczenie
+
+Każde ćwiczenie to jeden plik w [`data/exercises/`](data/exercises/), np. `przysiad.json`:
+
+- `phases`: fazy pokrywające cały cykl `0–1` (`from`, `to`, `contraction`: `none` / `eccentric` / `isometric` / `concentric`);
+- `angles`: kąty w stawach w stopniach w punktach cyklu (`hip`, `knee`, `ankle`, `trunk`, `lumbar`, `shoulder` = uniesienie ramion, `elbow`), czasy rosnące;
+- `muscles`: dla każdego mięśnia lub grupy `ids` (identyfikatory z `data/structures.csv`), `role`, `curve` (punkty `[t, %MVIC]`) albo `curve: null` i `estimate: true`, gdy brak danych liczbowych, `range`, `note`, `sources`;
+- `sources`: każde źródło z `cite` i `url` (najlepiej DOI). **Bez źródła nie wpisujemy liczb.**
+
+Po zmianie uruchom `npm run check-data`: sprawdza identyfikatory mięśni, źródła i kolejność czasów. Na razie zakładka czyta `przysiad.json`.
+
 ## Uruchomienie lokalnie
 
 ```bash

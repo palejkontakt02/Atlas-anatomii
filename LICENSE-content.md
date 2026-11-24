@@ -26,3 +26,7 @@ Atlas ich nie zawiera (lista wzorców w `pipeline/exclusions.txt`):
 
 - „Anatomy of the Inner Ear”, University of Dundee School of Medicine, CC BY-NC-SA 4.0 (ślimak, przedsionek);
 - „Kidney”, Lissie Cowley, CC BY-NC 4.0 (nerka, miedniczka nerkowa, naczynia wewnątrznerkowe).
+
+## Dane ćwiczeń
+
+Dane w `data/exercises/` (kąty w stawach, aktywność mięśni w % MVIC) pochodzą z badań cytowanych w polu `sources` każdego pliku, m.in. Isear i in. 1997 (https://doi.org/10.1097/00005768-199704000-00016), Zawadka i in. 2020, Endo i in. 2020 (https://doi.org/10.1589/jpts.32.391). Liczby są przytoczone jako fakty z publikacji; opisy, role i układ danych są opracowaniem własnym atlasu (CC BY-SA 4.0), oznaczonym `do_weryfikacji`.
