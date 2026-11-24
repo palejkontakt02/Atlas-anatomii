@@ -1,0 +1,739 @@
+{
+ "id": "przysiad",
+ "name": {
+  "pl": "Przysiad",
+  "en": "Squat"
+ },
+ "summary": {
+  "pl": "Przysiad bez obciążenia do pełnej głębokości, ramiona w przód.",
+  "en": "Unloaded bodyweight squat to full depth, arms forward."
+ },
+ "status": "do_weryfikacji",
+ "duration": 5.0,
+ "phases": [
+  {
+   "id": "start",
+   "name": {
+    "pl": "Pozycja wyjściowa",
+    "en": "Starting position"
+   },
+   "from": 0,
+   "to": 0.1,
+   "contraction": "none"
+  },
+  {
+   "id": "descent",
+   "name": {
+    "pl": "Zejście",
+    "en": "Descent"
+   },
+   "from": 0.1,
+   "to": 0.5,
+   "contraction": "eccentric"
+  },
+  {
+   "id": "bottom",
+   "name": {
+    "pl": "Dół przysiadu",
+    "en": "Bottom"
+   },
+   "from": 0.5,
+   "to": 0.58,
+   "contraction": "isometric"
+  },
+  {
+   "id": "ascent",
+   "name": {
+    "pl": "Wstawanie",
+    "en": "Ascent"
+   },
+   "from": 0.58,
+   "to": 0.9,
+   "contraction": "concentric"
+  },
+  {
+   "id": "end",
+   "name": {
+    "pl": "Pozycja końcowa",
+    "en": "End position"
+   },
+   "from": 0.9,
+   "to": 1,
+   "contraction": "none"
+  }
+ ],
+ "angles": {
+  "knee": [
+   [
+    0,
+    0
+   ],
+   [
+    0.1,
+    0
+   ],
+   [
+    0.28,
+    45
+   ],
+   [
+    0.5,
+    120
+   ],
+   [
+    0.58,
+    120
+   ],
+   [
+    0.75,
+    62
+   ],
+   [
+    0.9,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "hip": [
+   [
+    0,
+    0
+   ],
+   [
+    0.1,
+    0
+   ],
+   [
+    0.28,
+    58
+   ],
+   [
+    0.5,
+    115
+   ],
+   [
+    0.58,
+    115
+   ],
+   [
+    0.75,
+    55
+   ],
+   [
+    0.9,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "ankle": [
+   [
+    0,
+    0
+   ],
+   [
+    0.1,
+    0
+   ],
+   [
+    0.4,
+    30
+   ],
+   [
+    0.6,
+    30
+   ],
+   [
+    0.9,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "lumbar": [
+   [
+    0,
+    0
+   ],
+   [
+    0.1,
+    0
+   ],
+   [
+    0.4,
+    10
+   ],
+   [
+    0.6,
+    10
+   ],
+   [
+    0.9,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "trunk": [
+   [
+    0,
+    0
+   ],
+   [
+    0.1,
+    0
+   ],
+   [
+    0.45,
+    34
+   ],
+   [
+    0.6,
+    34
+   ],
+   [
+    0.9,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "shoulder": [
+   [
+    0,
+    0
+   ],
+   [
+    0.1,
+    0
+   ],
+   [
+    0.5,
+    90
+   ],
+   [
+    0.58,
+    90
+   ],
+   [
+    0.9,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ],
+  "elbow": [
+   [
+    0,
+    0
+   ],
+   [
+    0.1,
+    0
+   ],
+   [
+    0.5,
+    10
+   ],
+   [
+    0.58,
+    10
+   ],
+   [
+    0.9,
+    0
+   ],
+   [
+    1,
+    0
+   ]
+  ]
+ },
+ "anglesSources": [
+  "endo2020",
+  "pmc11307177",
+  "zawadka2020"
+ ],
+ "muscles": [
+  {
+   "ids": [
+    "vastus_medialis_muscle"
+   ],
+   "role": "main",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.1,
+     0
+    ],
+    [
+     0.2,
+     22
+    ],
+    [
+     0.33,
+     42
+    ],
+    [
+     0.45,
+     58
+    ],
+    [
+     0.54,
+     68
+    ],
+    [
+     0.62,
+     64
+    ],
+    [
+     0.72,
+     44
+    ],
+    [
+     0.84,
+     22
+    ],
+    [
+     0.9,
+     8
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "range": "22–68% MVIC (VMO)",
+   "estimate": false,
+   "note": {
+    "pl": "Główny prostownik kolana. Aktywność rośnie z głębokością; najwyższa w dole i na początku wstawania. W pozycji wyjściowej i końcowej aktywność pomijalna (przyjęto 0).",
+    "en": "Main knee extensor. Activity rises with depth; highest at the bottom and early ascent. At the start and end position activity is negligible (set to 0)."
+   },
+   "sources": [
+    "isear1997"
+   ]
+  },
+  {
+   "ids": [
+    "vastus_lateralis_muscle"
+   ],
+   "role": "main",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.1,
+     0
+    ],
+    [
+     0.2,
+     21
+    ],
+    [
+     0.33,
+     40
+    ],
+    [
+     0.45,
+     55
+    ],
+    [
+     0.54,
+     63
+    ],
+    [
+     0.62,
+     60
+    ],
+    [
+     0.72,
+     42
+    ],
+    [
+     0.84,
+     21
+    ],
+    [
+     0.9,
+     8
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "range": "21–63% MVIC",
+   "estimate": false,
+   "note": {
+    "pl": "Główny prostownik kolana, przebieg jak obszerny przyśrodkowy. W pozycji wyjściowej i końcowej aktywność pomijalna (przyjęto 0).",
+    "en": "Main knee extensor, same pattern as vastus medialis. At the start and end position activity is negligible (set to 0)."
+   },
+   "sources": [
+    "isear1997"
+   ]
+  },
+  {
+   "ids": [
+    "vastus_intermedius_muscle"
+   ],
+   "role": "main",
+   "curve": null,
+   "range": null,
+   "estimate": true,
+   "note": {
+    "pl": "Głęboka głowa czworogłowego, niedostępna dla EMG powierzchniowego; rola jak pozostałe głowy obszerne.",
+    "en": "Deep head of quadriceps, not reachable by surface EMG; role as the other vasti."
+   },
+   "sources": [
+    "isear1997"
+   ]
+  },
+  {
+   "ids": [
+    "rectus_femoris_muscle"
+   ],
+   "role": "synergist",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.1,
+     0
+    ],
+    [
+     0.25,
+     17
+    ],
+    [
+     0.5,
+     21
+    ],
+    [
+     0.58,
+     21
+    ],
+    [
+     0.8,
+     17
+    ],
+    [
+     0.9,
+     8
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "range": "17–21% MVIC",
+   "estimate": false,
+   "note": {
+    "pl": "Mięsień dwustawowy: prostuje kolano, ale zgina biodro, więc pracuje słabiej niż głowy obszerne. Kształt krzywej przyjęty jak u obszernych, wartości z badania.",
+    "en": "Two-joint muscle: extends the knee but flexes the hip, so it works less than the vasti. Curve shape assumed as for the vasti, values from the study."
+   },
+   "sources": [
+    "pmc5276771"
+   ]
+  },
+  {
+   "ids": [
+    "gluteus_maximus_muscle"
+   ],
+   "role": "synergist",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.1,
+     0
+    ],
+    [
+     0.3,
+     6
+    ],
+    [
+     0.5,
+     8
+    ],
+    [
+     0.58,
+     8
+    ],
+    [
+     0.8,
+     6
+    ],
+    [
+     0.9,
+     3
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "range": "6–8% MVIC; więcej w głębokim przysiadzie",
+   "estimate": false,
+   "note": {
+    "pl": "Prostownik biodra. W przysiadzie bez obciążenia pracuje słabo; aktywność rośnie przy zgięciu kolana powyżej ok. 70° i przy wstawaniu.",
+    "en": "Hip extensor. Works lightly in an unloaded squat; activity rises beyond about 70° of knee flexion and when rising."
+   },
+   "sources": [
+    "pmc5276771",
+    "agarwal2021",
+    "macadam2019"
+   ]
+  },
+  {
+   "ids": [
+    "long_head_of_biceps_femoris",
+    "short_head_of_biceps_femoris",
+    "semitendinosus_muscle",
+    "semimembranosus_muscle"
+   ],
+   "role": "stabilizer",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.1,
+     0
+    ],
+    [
+     0.2,
+     4
+    ],
+    [
+     0.33,
+     8
+    ],
+    [
+     0.45,
+     12
+    ],
+    [
+     0.54,
+     12
+    ],
+    [
+     0.72,
+     8
+    ],
+    [
+     0.84,
+     4
+    ],
+    [
+     0.9,
+     2
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "range": "4–12% MVIC (do ok. 16%)",
+   "estimate": false,
+   "note": {
+    "pl": "Mięśnie kulszowo-goleniowe: niski współskurcz stabilizujący kolano.",
+    "en": "Hamstrings: low co-contraction stabilising the knee."
+   },
+   "sources": [
+    "isear1997",
+    "pmc4316497"
+   ]
+  },
+  {
+   "ids": [
+    "iliocostalis_lumborum_muscle",
+    "longissimus_thoracis_muscle",
+    "multifidus_lumborum_muscle"
+   ],
+   "role": "stabilizer",
+   "curve": [
+    [
+     0,
+     0
+    ],
+    [
+     0.1,
+     0
+    ],
+    [
+     0.25,
+     21
+    ],
+    [
+     0.5,
+     25
+    ],
+    [
+     0.58,
+     25
+    ],
+    [
+     0.8,
+     21
+    ],
+    [
+     0.9,
+     10
+    ],
+    [
+     1,
+     0
+    ]
+   ],
+   "range": "21–25% MVIC",
+   "estimate": false,
+   "note": {
+    "pl": "Prostownik grzbietu utrzymuje pochylony tułów; aktywność rośnie z pochyleniem. Ruch zaczyna się od jego krótkiego rozluźnienia.",
+    "en": "Erector spinae holds the inclined trunk; activity rises with trunk lean. The movement starts with its brief relaxation."
+   },
+   "sources": [
+    "pmc5276771",
+    "agarwal2021"
+   ]
+  },
+  {
+   "ids": [
+    "tibialis_anterior_muscle"
+   ],
+   "role": "stabilizer",
+   "curve": null,
+   "range": null,
+   "estimate": true,
+   "note": {
+    "pl": "Aktywny na początku zejścia: steruje zgięciem grzbietowym stopy. Brak wartości liczbowych dla przysiadu bez obciążenia.",
+    "en": "Active at the start of the descent, controlling ankle dorsiflexion. No numeric values for an unloaded squat."
+   },
+   "sources": [
+    "agarwal2021"
+   ]
+  },
+  {
+   "ids": [
+    "medial_head_of_gastrocnemius",
+    "lateral_head_of_gastrocnemius",
+    "soleus_muscle"
+   ],
+   "role": "synergist",
+   "curve": null,
+   "range": null,
+   "estimate": true,
+   "note": {
+    "pl": "Mięśnie łydki kontrolują stopę; aktywność rośnie przy zgięciu kolana powyżej ok. 70°. Brak pewnych wartości dla przysiadu bez obciążenia.",
+    "en": "Calf muscles control the ankle; activity rises beyond about 70° of knee flexion. No reliable values for an unloaded squat."
+   },
+   "sources": [
+    "agarwal2021"
+   ]
+  },
+  {
+   "ids": [
+    "gluteus_medius_muscle"
+   ],
+   "role": "stabilizer",
+   "curve": null,
+   "range": null,
+   "estimate": true,
+   "note": {
+    "pl": "Stabilizuje miednicę i ustawienie kolan w płaszczyźnie czołowej. Brak wartości dla obunożnego przysiadu bez obciążenia.",
+    "en": "Stabilises the pelvis and knee alignment in the frontal plane. No values for an unloaded two-leg squat."
+   },
+   "sources": [
+    "agarwal2021"
+   ]
+  },
+  {
+   "ids": [
+    "rectus_abdominis_muscle",
+    "external_abdominal_oblique_muscle",
+    "internal_abdominal_oblique_muscle",
+    "transversus_abdominis_muscle"
+   ],
+   "role": "stabilizer",
+   "curve": null,
+   "range": null,
+   "estimate": true,
+   "note": {
+    "pl": "Mięśnie brzucha stabilizują tułów. Dane liczbowe są tylko dla przysiadu z obciążeniem.",
+    "en": "Abdominal muscles stabilise the trunk. Numeric data exist only for loaded squats."
+   },
+   "sources": [
+    "pmc7345922"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "isear1997",
+   "cite": "Isear JA, Erickson JC, Worrell TW. EMG analysis of lower extremity muscle recruitment patterns during an unloaded squat. Med Sci Sports Exerc 1997;29(4):532–539.",
+   "url": "https://doi.org/10.1097/00005768-199704000-00016"
+  },
+  {
+   "id": "zawadka2020",
+   "cite": "Zawadka M i in. How Are Squat Timing and Kinematics in The Sagittal Plane Related to Squat Depth? J Sports Sci Med 2020;19:500–507.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/32874102/"
+  },
+  {
+   "id": "endo2020",
+   "cite": "Endo Y, Miura M, Sakamoto M. The relationship between the deep squat movement and the hip, knee and ankle range of motion and muscle strength. J Phys Ther Sci 2020;32(6):391–394.",
+   "url": "https://doi.org/10.1589/jpts.32.391"
+  },
+  {
+   "id": "pmc11307177",
+   "cite": "Relationship among the COM Motion, the Lower Extremity and the Trunk during the Squat.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11307177"
+  },
+  {
+   "id": "pmc5276771",
+   "cite": "Activation of back and lower limb muscles during squat exercises with different trunk flexion. J Phys Ther Sci 2016.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5276771"
+  },
+  {
+   "id": "pmc4316497",
+   "cite": "EMG Analysis of Lower Extremity Muscles in Three Different Squat Exercises.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4316497"
+  },
+  {
+   "id": "agarwal2021",
+   "cite": "Agarwal, van Deursen, Mullerpatan. Electromyographic activity during bodyweight deep squat. Trends in Sport Sciences 2021.",
+   "url": "https://tss.awf.poznan.pl/pdf-132004-110416?filename=Electromyographic.pdf"
+  },
+  {
+   "id": "macadam2019",
+   "cite": "Macadam P, Feser EH. Examination of gluteus maximus electromyographic excitation associated with dynamic hip extension during body weight exercise: a systematic review. Int J Sports Phys Ther 2019;14(1):14–31.",
+   "url": "https://pubmed.ncbi.nlm.nih.gov/30746289/"
+  },
+  {
+   "id": "pmc7345922",
+   "cite": "Core Muscle Activity during Physical Fitness Exercises: A Systematic Review. Int J Environ Res Public Health 2020.",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922"
+  }
+ ]
+}

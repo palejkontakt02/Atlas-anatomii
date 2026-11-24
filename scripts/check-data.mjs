@@ -7,10 +7,13 @@ import { MeshoptDecoder } from 'meshoptimizer';
 import { SYSTEMS } from '../src/config.js';
 import { parseStructures } from '../src/structures.js';
 import { duplicateIds, validate } from './validate-data.js';
+import { parseExercise, validateExercise } from '../src/exercise/exercise-data.js';
 
 const MAX_BYTES = 95 * 1024 * 1024;
 const i = process.argv.indexOf('--csv');
 const csvPath = i > 0 ? process.argv[i + 1] : 'data/structures.csv';
+const k = process.argv.indexOf('--exercises');
+const exDir = k > 0 ? process.argv[k + 1] : 'data/exercises';
 
 await MeshoptDecoder.ready;
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({ 'meshopt.decoder': MeshoptDecoder });
@@ -33,9 +36,19 @@ for (const { key } of SYSTEMS) {
 const r = validate(structures, nodeNames, SYSTEMS.map((s) => s.key));
 errors.push(...r.errors);
 for (const w of r.warnings) console.warn(`uwaga: ${w}`);
+let exercises = 0;
+for (const f of fs.existsSync(exDir) ? fs.readdirSync(exDir).filter((x) => x.endsWith('.json')) : []) {
+  try {
+    const ex = parseExercise(JSON.parse(fs.readFileSync(`${exDir}/${f}`, 'utf8')));
+    errors.push(...validateExercise(ex, structures).map((e) => `${f}: ${e}`));
+    exercises++;
+  } catch (e) {
+    errors.push(`${f}: ${e.message}`);
+  }
+}
 const meshes = Object.values(nodeNames).reduce((a, n) => a + n.length, 0);
 if (errors.length) {
   for (const e of errors) console.error(`BŁĄD: ${e}`);
   process.exit(1);
 }
-console.log(`OK: ${structures.size} struktur, ${meshes} węzłów w ${Object.keys(nodeNames).length} plikach`);
+console.log(`OK: ${structures.size} struktur, ${meshes} węzłów w ${Object.keys(nodeNames).length} plikach, ćwiczenia: ${exercises}`);
