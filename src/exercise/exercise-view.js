@@ -9,7 +9,7 @@ import { normalizeStructureMeshes } from '../parts.js';
 import { resolveMeshName } from '../structures.js';
 import { HIDDEN_TISSUES } from '../config.js';
 import { isTap, pickWithTolerance } from '../pick.js';
-import { sampleAngles, phaseAt, musclesNow } from './exercise-data.js';
+import { poseAngles, phaseAt, musclesNow } from './exercise-data.js';
 import { createPlayer } from './player.js';
 import { findJoints, buildSkeleton, segmentLines, skinWeights, applyPose, worldVerts } from './rig.js';
 import { heatColor, ROLE_COLORS, ESTIMATE_OPACITY } from './heat.js';
@@ -206,7 +206,7 @@ export function createExerciseView(canvas, { exercise, onSelect = () => {}, onFr
     const t0 = performance.now();
     player.tick(dt);
     const t = player.progress();
-    const angles = sampleAngles(exercise, t);
+    const angles = poseAngles(exercise, t);
     applyPose(bones, angles);
     const muscles = musclesNow(exercise, t);
     paint(muscles);

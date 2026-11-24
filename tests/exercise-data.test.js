@@ -73,5 +73,40 @@ test('real przysiad.json is valid against structures.csv', () => {
   expect(validateExercise(ex, structures)).toEqual([]);
   expect(ex.muscles.every((m) => m.sources.length > 0)).toBe(true);
   expect(ex.muscles.filter((m) => m.curve === null).every((m) => m.estimate)).toBe(true);
-  expect(sampleAngles(ex, 0.54)).toMatchObject({ knee: 120, hip: 115, ankle: 30, trunk: 34 });
+  expect(sampleAngles(ex, 0.54)).toMatchObject({ knee: 120, ankle: 30, trunk: 34 });
+});
+
+import { poseAngles } from '../src/exercise/exercise-data.js';
+
+test('poseAngles: the hip follows the trunk lean, so the shown trunk equals the model lean', () => {
+  const ex = parseExercise(JSON.parse(fs.readFileSync('data/exercises/przysiad.json', 'utf8')));
+  for (const t of [0.05, 0.2, 0.3, 0.45, 0.54, 0.7, 0.85]) {
+    const a = poseAngles(ex, t);
+    expect(a.ankle - a.knee + a.hip + a.lumbar).toBeCloseTo(a.trunk, 6);
+    expect(a.trunk).toBeLessThanOrEqual(35); // źródła: 33–35°
+  }
+  expect(poseAngles(ex, 0.54).hip).toBeCloseTo(114, 0);
+});
+
+test('validateExercise: numbers need a source, no estimate flag, valid role, range 0–100, valid contraction', () => {
+  const raw = EX();
+  raw.muscles[0].sources = [];
+  raw.muscles[1].estimate = true;
+  raw.muscles[2].role = 'boss';
+  raw.muscles.push({ ids: ['vastus_lateralis_muscle'], role: 'main', curve: [[0, 0], [0.5, 250]], estimate: false, note: T(''), sources: ['isear'] });
+  raw.phases[1].contraction = 'jumping';
+  const structures = new Map(['vastus_lateralis_muscle', 'gluteus_maximus_muscle', 'tibialis_anterior_muscle'].map((id) => [id, { id }]));
+  const errs = validateExercise(parseExercise(raw), structures);
+  expect(errs).toContain('faza "down": nieznany typ skurczu "jumping"');
+  expect(errs).toContain('mięsień "vastus_lateralis_muscle": liczby bez źródła');
+  expect(errs).toContain('mięsień "gluteus_maximus_muscle": krzywa z liczbami nie może mieć estimate: true');
+  expect(errs).toContain('mięsień "tibialis_anterior_muscle": nieznana rola "boss"');
+  expect(errs).toContain('mięsień "vastus_lateralis_muscle": wartości % MVIC muszą być w zakresie 0–100');
+  expect(errs).toContain('mięsień "vastus_lateralis_muscle": występuje w kilku wpisach');
+});
+
+test('gluteus maximus card does not promise a rise the curve does not show', () => {
+  const ex = JSON.parse(fs.readFileSync('data/exercises/przysiad.json', 'utf8'));
+  const g = ex.muscles.find((m) => m.ids.includes('gluteus_maximus_muscle'));
+  expect(g.range).not.toMatch(/więcej/);
 });

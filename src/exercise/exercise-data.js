@@ -8,6 +8,7 @@ export function parseExercise(json) {
     ...json,
     status: json.status || 'do_weryfikacji',
     muscles: json.muscles.map((m) => ({ ...m, sources: m.sources || [], estimate: m.curve ? !!m.estimate : true })),
+    // (estimate przy krzywej zostaje, żeby walidator mógł zgłosić sprzeczność)
   };
 }
 
@@ -29,6 +30,15 @@ export function sampleCurve(points, t) {
 
 export function sampleAngles(ex, t) {
   return Object.fromEntries(JOINTS.map((j) => [j, sampleCurve(ex.angles[j], t)]));
+}
+
+/**
+ * Angles that drive the model. The trunk lean from the sources (data "trunk") is authoritative;
+ * the hip is derived so that ankle − knee + hip + lumbar = trunk, keeping the shown lean equal to the model's.
+ */
+export function poseAngles(ex, t) {
+  const a = sampleAngles(ex, t);
+  return { ...a, hip: a.trunk - a.ankle + a.knee - a.lumbar };
 }
 
 export function phaseAt(ex, t) {
@@ -63,6 +73,8 @@ export function musclesNow(ex, t) {
   });
 }
 
+const ROLES = ['main', 'synergist', 'stabilizer', 'antagonist'];
+const CONTRACTIONS = ['none', 'eccentric', 'isometric', 'concentric'];
 const increasing = (pts) => pts.every(([t], i) => t >= 0 && t <= 1 && (i === 0 || t > pts[i - 1][0]));
 
 /** Problems with an exercise file, as readable messages (empty = valid). */
@@ -72,18 +84,32 @@ export function validateExercise(ex, structures) {
     if (!JOINTS.includes(joint)) errors.push(`angles.${joint}: nieznany staw`);
     else if (!increasing(pts)) errors.push(`angles.${joint}: czasy muszą rosnąć w zakresie 0–1`);
   }
+  for (const p of ex.phases) if (!CONTRACTIONS.includes(p.contraction)) errors.push(`faza "${p.id}": nieznany typ skurczu "${p.contraction}"`);
   const ph = [...ex.phases].sort((a, b) => a.from - b.from);
   if (ph[0]?.from !== 0 || ph[ph.length - 1]?.to !== 1 || ph.some((p, i) => i > 0 && p.from !== ph[i - 1].to)) {
     errors.push('fazy muszą pokrywać 0–1 bez przerw');
   }
   const sourceIds = new Set(ex.sources.map((s) => s.id));
   const missingSources = new Set();
+  const seen = new Set();
+  const dup = new Set();
   for (const m of ex.muscles) {
-    for (const id of m.ids) if (!structures.has(id)) errors.push(`mięsień "${id}": brak w structures.csv`);
-    if (m.curve && !increasing(m.curve)) errors.push(`mięsień "${m.ids[0]}": krzywa: czasy muszą rosnąć w zakresie 0–1`);
-    if (!m.curve && !m.estimate) errors.push(`mięsień "${m.ids[0]}": bez krzywej musi mieć estimate: true`);
+    const name = m.ids[0];
+    for (const id of m.ids) {
+      if (!structures.has(id)) errors.push(`mięsień "${id}": brak w structures.csv`);
+      if (seen.has(id)) dup.add(id);
+      seen.add(id);
+    }
+    if (!ROLES.includes(m.role)) errors.push(`mięsień "${name}": nieznana rola "${m.role}"`);
+    if (m.curve) {
+      if (!increasing(m.curve)) errors.push(`mięsień "${name}": krzywa: czasy muszą rosnąć w zakresie 0–1`);
+      if (m.curve.some(([, v]) => !(v >= 0 && v <= 100))) errors.push(`mięsień "${name}": wartości % MVIC muszą być w zakresie 0–100`);
+      if (!m.sources.length) errors.push(`mięsień "${name}": liczby bez źródła`);
+      if (m.estimate) errors.push(`mięsień "${name}": krzywa z liczbami nie może mieć estimate: true`);
+    } else if (!m.estimate) errors.push(`mięsień "${name}": bez krzywej musi mieć estimate: true`);
     for (const s of m.sources) if (!sourceIds.has(s)) missingSources.add(s);
   }
+  for (const id of dup) errors.push(`mięsień "${id}": występuje w kilku wpisach`);
   for (const s of missingSources) errors.push(`źródło "${s}" nie jest zdefiniowane`);
   return errors;
 }

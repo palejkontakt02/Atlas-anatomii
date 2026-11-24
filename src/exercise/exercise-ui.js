@@ -40,77 +40,69 @@ export function createExerciseUI({ exercise, structures, handlers }) {
     });
   }
   $('ex-card-close').addEventListener('click', () => { hideCard(); handlers.onPickMuscle(null); });
+  $('ex-panel-toggle').addEventListener('click', () => {
+    const collapsed = $('ex-panel').classList.toggle('collapsed');
+    $('ex-panel-toggle').setAttribute('aria-expanded', String(!collapsed));
+  });
 
   const labelOf = (m) => {
     if (m.label) return m.label[lang === 'en' ? 'en' : 'pl'];
     return displayName(structures.get(m.ids[0]), null, nameLang(), m.ids[0]);
   };
 
+  // Jeden wiersz na wpis mięśnia, tworzony raz: przy odtwarzaniu zmieniamy tylko tekst, pasek i kolejność,
+  // żeby stuknięcie w wiersz (albo link) nie trafiało w element, który właśnie zniknął.
+  const rows = new Map();
+  for (const entry of exercise.muscles) {
+    const li = document.createElement('li');
+    li.setAttribute('data-testid', 'ex-now-item');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    const name = document.createElement('span'); name.className = 'n';
+    const role = document.createElement('span'); role.className = 'r';
+    const bar = document.createElement('span'); bar.className = 'bar';
+    const fill = document.createElement('i');
+    bar.append(fill);
+    const val = document.createElement('span'); val.className = 'v';
+    btn.append(name, role, bar, val);
+    btn.addEventListener('click', () => {
+      handlers.onPickMuscle(entry.ids[0]);
+      showCard(entry.ids[0], null, entry.ids[0]);
+    });
+    li.append(btn);
+    rows.set(entry.ids, { li, name, role, bar, fill, val });
+  }
+  const setText = (el, text) => { if (el.textContent !== text) el.textContent = text; };
+
   function renderList(muscles) {
     const list = $('ex-now');
-    list.textContent = '';
-    for (const m of muscles.slice(0, 10)) {
-      const li = document.createElement('li');
-      li.dataset.testid = 'ex-now-item';
-      li.setAttribute('data-testid', 'ex-now-item');
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      const name = document.createElement('span');
-      name.className = 'n';
-      name.textContent = labelOf(m);
-      const role = document.createElement('span');
-      role.className = 'r';
-      role.style.setProperty('--role', ROLE_COLORS[m.role]);
-      role.textContent = t().roles[m.role];
-      const bar = document.createElement('span');
-      bar.className = 'bar';
-      const val = document.createElement('span');
-      val.className = 'v';
+    const strings = t();
+    muscles.forEach((m, i) => {
+      const r = rows.get(m.ids);
+      if (!r) return;
+      r.li.hidden = i >= 10;
+      setText(r.name, labelOf(m));
+      r.role.style.setProperty('--role', ROLE_COLORS[m.role]);
+      setText(r.role, strings.roles[m.role]);
+      r.bar.classList.toggle('estimate', m.mvic === null);
       if (m.mvic === null) {
-        val.textContent = t().estimate;
-        bar.classList.add('estimate');
+        setText(r.val, strings.estimate);
+        r.fill.style.width = '0';
       } else {
-        val.textContent = `${round(m.mvic)}%`;
-        const fill = document.createElement('i');
-        fill.style.width = `${Math.min(m.mvic, 70) / 0.7}%`;
-        fill.style.background = heatColor(m.mvic);
-        bar.append(fill);
+        setText(r.val, `${round(m.mvic)}%`);
+        r.fill.style.width = `${Math.min(m.mvic, 70) / 0.7}%`;
+        r.fill.style.background = heatColor(m.mvic);
       }
-      btn.append(name, role, bar, val);
-      btn.addEventListener('click', () => {
-        handlers.onPickMuscle(m.ids[0]);
-        showCard(m.ids[0], null, m.ids[0]);
-      });
-      li.append(btn);
-      list.append(li);
-    }
+      if (list.children[i] !== r.li) list.insertBefore(r.li, list.children[i] || null);
+    });
   }
 
-  function renderCard() {
-    if (!card || !last) return;
-    const s = structures.get(card.id) || null;
-    const strings = t();
-    $('ex-card-main').textContent = displayName(s, card.side, lang, card.fallbackEn);
-    const line = (f) => (s && s[f] ? displayName(s, card.side, f) : f === 'en' ? card.fallbackEn : '—');
-    $('ex-card-pl').textContent = line('pl');
-    $('ex-card-en').textContent = line('en');
-    $('ex-card-la').textContent = line('la');
-    const a = activationAt(exercise, card.id, last.t);
+  function renderCardSources(a) {
     const src = $('ex-card-source');
     src.textContent = '';
-    if (!a) {
-      $('ex-card-role').textContent = '';
-      $('ex-card-mvic').textContent = strings.notInvolved;
-      $('ex-card-note').textContent = '';
-      return;
-    }
-    $('ex-card-role').textContent = `${strings.roles[a.role]} · ${strings.contractionShort[a.contraction]}`;
-    $('ex-card-mvic').textContent = a.mvic === null
-      ? strings.estimateLong
-      : `${round(a.mvic)}% MVIC ${strings.now}.${a.range ? ` ${strings.range}: ${a.range}` : ''}`;
-    $('ex-card-note').textContent = a.note ? a.note[lang === 'en' ? 'en' : 'pl'] : '';
+    if (!a) return;
     const h = document.createElement('h4');
-    h.textContent = strings.sources;
+    h.textContent = t().sources;
     const ul = document.createElement('ul');
     for (const id of a.sources) {
       const source = exercise.sources.find((x) => x.id === id);
@@ -125,6 +117,30 @@ export function createExerciseUI({ exercise, structures, handlers }) {
       ul.append(li);
     }
     src.append(h, ul);
+  }
+
+  function renderCard() {
+    if (!card || !last) return;
+    const s = structures.get(card.id) || null;
+    const strings = t();
+    $('ex-card-main').textContent = displayName(s, card.side, lang, card.fallbackEn);
+    const line = (f) => (s && s[f] ? displayName(s, card.side, f) : f === 'en' ? card.fallbackEn : '—');
+    $('ex-card-pl').textContent = line('pl');
+    $('ex-card-en').textContent = line('en');
+    $('ex-card-la').textContent = line('la');
+    const a = activationAt(exercise, card.id, last.t);
+    if (!a) {
+      setText($('ex-card-role'), '');
+      setText($('ex-card-mvic'), strings.notInvolved);
+      setText($('ex-card-note'), '');
+      return a;
+    }
+    setText($('ex-card-role'), `${strings.roles[a.role]} · ${strings.contractionShort[a.contraction]}`);
+    setText($('ex-card-mvic'), a.mvic === null
+      ? strings.estimateLong
+      : `${round(a.mvic)}% MVIC ${strings.now}.${a.range ? ` ${strings.range}: ${a.range}` : ''}`);
+    setText($('ex-card-note'), a.note ? a.note[lang === 'en' ? 'en' : 'pl'] : '');
+    return a;
   }
 
   function render(frame) {
@@ -153,7 +169,7 @@ export function createExerciseUI({ exercise, structures, handlers }) {
   function showCard(id, side, fallbackEn) {
     card = { id, side, fallbackEn };
     $('ex-card').hidden = false;
-    renderCard();
+    renderCardSources(renderCard());
   }
   function hideCard() {
     card = null;
@@ -165,7 +181,9 @@ export function createExerciseUI({ exercise, structures, handlers }) {
     $('ex-title').textContent = exercise.name[lang === 'en' ? 'en' : 'pl'];
     $('ex-status').textContent = $('ex-status').dataset.ready === 'true' ? t().exStatus : t().exLoading;
     seek.setAttribute('aria-label', t().seek);
+    $('ex-card-close').setAttribute('aria-label', t().close);
     if (last) { lastListAt = 0; render(last); }
+    if (card) renderCardSources(renderCard());
   }
 
   function setReady(ok) {

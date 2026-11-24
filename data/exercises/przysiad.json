@@ -97,40 +97,6 @@
     0
    ]
   ],
-  "hip": [
-   [
-    0,
-    0
-   ],
-   [
-    0.1,
-    0
-   ],
-   [
-    0.28,
-    58
-   ],
-   [
-    0.5,
-    115
-   ],
-   [
-    0.58,
-    115
-   ],
-   [
-    0.75,
-    55
-   ],
-   [
-    0.9,
-    0
-   ],
-   [
-    1,
-    0
-   ]
-  ],
   "ankle": [
    [
     0,
@@ -494,11 +460,11 @@
      0
     ]
    ],
-   "range": "6–8% MVIC; więcej w głębokim przysiadzie",
+   "range": "6–8% MVIC",
    "estimate": false,
    "note": {
-    "pl": "Prostownik biodra. W przysiadzie bez obciążenia pracuje słabo; aktywność rośnie przy zgięciu kolana powyżej ok. 70° i przy wstawaniu.",
-    "en": "Hip extensor. Works lightly in an unloaded squat; activity rises beyond about 70° of knee flexion and when rising."
+    "pl": "Prostownik biodra. W przysiadzie bez obciążenia pracuje słabo (6–8% MVIC). Według Agarwal i in. aktywność rośnie przy zgięciu kolana powyżej ok. 70°, ale brak dla tego liczb, więc krzywa pokazuje tylko zmierzony zakres.",
+    "en": "Hip extensor. Works lightly in an unloaded squat (6–8% MVIC). Agarwal et al. report more activity beyond about 70° of knee flexion, but give no numbers, so the curve shows only the measured range."
    },
    "sources": [
     "pmc5276771",
@@ -751,5 +717,9 @@
    "cite": "Core Muscle Activity during Physical Fitness Exercises: A Systematic Review. Int J Environ Res Public Health 2020.",
    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7345922"
   }
- ]
+ ],
+ "anglesNote": {
+  "pl": "Kąt biodra wynika z pochylenia tułowia (źródła: 33–35°) i kątów stawu skokowego, kolana i odcinka lędźwiowego.",
+  "en": "The hip angle follows from the trunk lean (sources: 33–35°) and the ankle, knee and lumbar angles."
+ }
 }

@@ -1,4 +1,4 @@
-import { DEFAULT_ON } from './config.js';
+import { DEFAULT_ON, UI } from './config.js';
 import { latestOnly } from './latest.js';
 import { LayerManager } from './layers.js';
 import { searchStructures } from './search.js';
@@ -123,11 +123,16 @@ function ensureExercise() {
       onSelect: (sel) => (sel ? exUI.showCard(sel.id, sel.side, sel.fallbackEn) : exUI.hideCard()),
     });
     window.__atlas.exercise = exView;
+    // użytkownik mógł wyjść z zakładki, zanim widok powstał: nie animujemy w tle
+    if (document.body.dataset.mode !== 'exercise') { exWasPlaying = true; exView.pause(); }
     await exView.ready;
     exUI.setReady(true);
   })().catch((e) => {
     console.warn('Ćwiczenie:', e.message);
-    exUI?.setReady(false);
+    const status = document.getElementById('ex-status');
+    status.dataset.ready = 'false';
+    status.textContent = UI[ui.getLang() === 'en' ? 'en' : 'pl'].exError;
+    if (!exView) exLoading = null; // plik ćwiczenia nie doszedł: spróbujemy przy następnym wejściu
   });
   return exLoading;
 }
