@@ -6,6 +6,7 @@ import { SYSTEMS, HIDDEN_TISSUES, colorFor } from './config.js';
 import { isTap, pickWithTolerance } from './pick.js';
 import { createVisibility } from './visibility.js';
 import { resolveMeshName } from './structures.js';
+import { fetchModel } from './model-file.js';
 
 const BACKGROUND = '#14171c';
 
@@ -111,8 +112,8 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
   }
 
   async function loadLayer(system) {
-    const def = SYSTEMS.find((s) => s.key === system);
-    const gltf = await loader.loadAsync(def.file);
+    // Pobieramy plik sami (względny URL) i parsujemy w pamięci: bez dodatkowych żądań loadera.
+    const gltf = await loader.parseAsync(await fetchModel(system), '');
     const root = gltf.scene;
     root.name = `layer:${system}`;
     const added = [];

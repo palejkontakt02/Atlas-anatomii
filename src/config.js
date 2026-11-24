@@ -5,7 +5,7 @@ export const SYSTEMS = [
   { key: 'vessels', color: '#c0392b', label: { pl: 'Naczynia', en: 'Vessels' } },
   { key: 'nerves', color: '#e2c044', label: { pl: 'Układ nerwowy i narządy zmysłów', en: 'Nervous system & sense organs' } },
   { key: 'organs', color: '#c98b78', label: { pl: 'Narządy wewnętrzne', en: 'Internal organs' } },
-].map((s) => ({ ...s, file: `models/${s.key}.glb` }));
+];
 
 export const DEFAULT_ON = ['bones'];
 export const VEIN_COLOR = '#3d5fa8';

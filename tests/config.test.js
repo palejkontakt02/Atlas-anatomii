@@ -1,9 +1,8 @@
 import { test, expect } from 'vitest';
 import { colorFor, SYSTEMS } from '../src/config.js';
 
-test('systems in plan order with files', () => {
+test('systems in plan order', () => {
   expect(SYSTEMS.map((s) => s.key)).toEqual(['bones', 'joints', 'muscles', 'vessels', 'nerves', 'organs']);
-  expect(SYSTEMS[0].file).toBe('models/bones.glb');
 });
 test('vessel colors: veins blue, arteries red', () => {
   expect(colorFor('vessels', 'vein', 'Left renal vein')).toBe('#3d5fa8');
