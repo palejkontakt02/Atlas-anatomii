@@ -21,3 +21,9 @@ test('nerves vs brain tissue', () => {
   expect(colorFor('nerves', 'brain-inner', 'X')).toBe('#d6b8b0');
   expect(colorFor('nerves', 'white matter', 'X')).toBe('#d6b8b0');
 });
+
+test('part decides tendon vs belly colour in muscles', () => {
+  expect(colorFor('muscles', 'tendon', 'Latissimus dorsi muscle', 'tendon')).toBe('#e9e6dc');
+  expect(colorFor('muscles', 'tendon', 'Latissimus dorsi muscle', 'belly')).toBe('#b5473f');
+  expect(colorFor('muscles', 'adductor', 'Latissimus dorsi muscle', 'belly')).toBe('#b5473f');
+});

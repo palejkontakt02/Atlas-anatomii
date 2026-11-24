@@ -9,3 +9,23 @@ export function partOf(materialName) {
   if (BELLY.test(n)) return 'belly';
   return 'other';
 }
+
+/**
+ * GLTFLoader turns a node with several primitives into a Group whose child meshes get suffixed names.
+ * Give every mesh its structure's node name and extras, plus its own tissue (material) and part.
+ * Returns all meshes under root.
+ */
+export function normalizeStructureMeshes(root) {
+  const meshes = [];
+  root.traverse((o) => {
+    if (!o.isMesh) return;
+    let holder = o;
+    while (holder && !holder.userData?.name && holder.parent) holder = holder.parent;
+    if (!holder?.userData?.name) holder = o;
+    const tissue = ((o.material && o.material.name) || holder.userData.tissue || '').replace(/^atlas:/, '');
+    o.name = holder.name;
+    o.userData = { ...holder.userData, tissue, part: partOf(tissue) };
+    meshes.push(o);
+  });
+  return meshes;
+}

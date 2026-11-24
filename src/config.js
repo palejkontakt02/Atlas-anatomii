@@ -31,7 +31,9 @@ export const HIDDEN_TISSUES = ['fascia', 'peritoneum'];
 const BRAIN_TISSUE = /^(brain|white matter|nucleus|cerebellum|.*lobe|insula|interlobar sulci|lcr)/;
 const VEIN_NAME = /\b(vein|veins|venous|sinus|vena|venae)\b/i;
 
-export function colorFor(system, tissue, name) {
+export function colorFor(system, tissue, name, part) {
+  if (system === 'muscles' && part === 'belly') return SYSTEMS.find((s) => s.key === 'muscles').color;
+  if (system === 'muscles' && part === 'tendon' && !TISSUE_COLORS[tissue]) return TISSUE_COLORS.tendon;
   if (TISSUE_COLORS[tissue]) return TISSUE_COLORS[tissue];
   const sys = SYSTEMS.find((s) => s.key === system);
   if (system === 'vessels' && VEIN_NAME.test(name || '')) return VEIN_COLOR;

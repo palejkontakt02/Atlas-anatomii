@@ -7,6 +7,7 @@ import { isTap, pickWithTolerance } from './pick.js';
 import { createVisibility } from './visibility.js';
 import { resolveMeshName } from './structures.js';
 import { fetchModel } from './model-file.js';
+import { normalizeStructureMeshes } from './parts.js';
 
 const BACKGROUND = '#14171c';
 
@@ -116,15 +117,12 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
     const gltf = await loader.parseAsync(await fetchModel(system), '');
     const root = gltf.scene;
     root.name = `layer:${system}`;
-    const added = [];
-    root.traverse((o) => {
-      if (!o.isMesh) return;
+    const added = normalizeStructureMeshes(root);
+    for (const o of added) {
       o.userData.system = system;
-      o.userData.tissue = o.userData.tissue || '';
-      o.material = materialFor(colorFor(system, o.userData.tissue, o.userData.name));
+      o.material = materialFor(colorFor(system, o.userData.tissue, o.userData.name, o.userData.part));
       o.userData.baseMaterial = o.material;
-      added.push(o);
-    });
+    }
     meshes.push(...added);
     visibility.applyTo(added);
     scene.add(root);
@@ -185,7 +183,7 @@ export function createViewer(canvas, { onSelect = () => {} } = {}) {
       return;
     }
     const info = describe(hit.object);
-    setHighlight([hit.object]);
+    setHighlight(meshesOf(info.id, info.side)); // wszystkie części struktury (brzusiec i ścięgno)
     onSelect(info);
   });
 
